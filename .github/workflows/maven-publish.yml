@@ -27,7 +27,7 @@ jobs:
         run: mvn clean install
 
       - name: Publish to GitHub Packages
-        run: mvn deploy
+        run: mvn deploy -DaltDeploymentRepository=github::default::https://maven.pkg.github.com/gabrielldn/java-api-with-otlp-sdk
         env:
           USERNAME: ${{ github.actor }}
           TOKEN: ${{ secrets.TOKEN_GITHUB }}
