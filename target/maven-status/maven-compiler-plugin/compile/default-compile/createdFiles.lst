@@ -1,5 +1,6 @@
 com/example/model/User.class
 com/example/exception/UserNotFoundException.class
+com/example/controller/HealthController.class
 com/example/repository/UserRepository.class
 com/example/controller/UserController.class
 com/example/RestApiApplication.class
