@@ -1,0 +1,7 @@
+/home/gaellopes/java-api-with-otlp-sdk/src/main/java/com/example/exception/UserNotFoundException.java
+/home/gaellopes/java-api-with-otlp-sdk/src/main/java/com/example/service/UserService.java
+/home/gaellopes/java-api-with-otlp-sdk/src/main/java/com/example/controller/HelloController.java
+/home/gaellopes/java-api-with-otlp-sdk/src/main/java/com/example/RestApiApplication.java
+/home/gaellopes/java-api-with-otlp-sdk/src/main/java/com/example/repository/UserRepository.java
+/home/gaellopes/java-api-with-otlp-sdk/src/main/java/com/example/controller/UserController.java
+/home/gaellopes/java-api-with-otlp-sdk/src/main/java/com/example/model/User.java
