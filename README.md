@@ -16,7 +16,6 @@
 - [Usage](#usage)
    - [Running the API](#running-the-api)
    - [API Endpoints](#api-endpoints)
-   - [OpenTelemetry Integration](#opentelemetry-integration)
 - [Components in Detail](#components-in-detail)
    - [Spring Boot API](#spring-boot-api)
    - [OpenTelemetry SDK](#opentelemetry-sdk)
@@ -24,7 +23,6 @@
    - [Swagger Documentation](#swagger-documentation)
 - [Configurations](#configurations)
    - [Application Properties](#application-properties)
-   - [OpenTelemetry Configuration](#opentelemetry-configuration)
 - [Troubleshooting](#troubleshooting)
 - [Contribution](#contribution)
 - [License](#license)
@@ -88,11 +86,9 @@ java-api-with-otlp-sdk/
 │   │   │           ├── repository/        # Data access layer
 │   │   │           ├── model/             # Domain entities
 │   │   │           ├── config/            # Application configs
-│   │   │           │   └── OpenTelemetryConfig.java
 │   │   │           └── Application.java   # Main application class
 │   │   └── resources/
 │   │       ├── application.properties     # App configuration
-│   │       └── otel-config.yaml           # OpenTelemetry config
 │   └── test/                              # Unit and integration tests
 ├── pom.xml                                # Maven dependencies
 ├── Dockerfile                             # Container definition
@@ -164,15 +160,7 @@ Main endpoints include:
 - `PUT /users/{id}` - Update existing user
 - `DELETE /users/{id}` - Delete user
 
-### OpenTelemetry Integration
 
-The application is configured to send telemetry data to an OpenTelemetry Collector. By default, it uses the following settings:
-
-- OTLP Export Protocol: gRPC
-- Collector Endpoint: `http://localhost:4317`
-- Service Name: `java-api-service`
-
-These settings can be modified in the `application.properties` file.
 
 ## Components in Detail
 
@@ -234,20 +222,8 @@ spring.h2.console.enabled=true
 # JPA/Hibernate
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
-
-# OpenTelemetry
-otel.service.name=java-api-service
-otel.exporter.otlp.endpoint=http://localhost:4317
 ```
 
-### OpenTelemetry Configuration
-
-The OpenTelemetry SDK is configured in `OpenTelemetryConfig.java`:
-
-- Automatic instrumentation of Spring Web, JDBC, and JPA
-- Resource attributes including service name and version
-- Span processors for batching and exporting telemetry data
-- Integration with Spring's logging framework
 
 ## Troubleshooting
 
@@ -258,10 +234,6 @@ The OpenTelemetry SDK is configured in `OpenTelemetryConfig.java`:
    - Check the application logs for specific error messages
    - Ensure required ports are available (8080 for API)
 
-2. **Telemetry data not showing up**:
-   - Verify the OpenTelemetry Collector is running
-   - Check the collector endpoint configuration
-   - Look for connection errors in the application logs
 
 3. **Database connection issues**:
    - Check H2 console for database state
