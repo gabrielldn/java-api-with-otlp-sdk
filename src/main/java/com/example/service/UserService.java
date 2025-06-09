@@ -35,9 +35,9 @@ public class UserService {
     }
     
     public void deleteUser(Long id) {
-        if (!userRepository.existsById(id)) {
-            throw new UserNotFoundException("User not found with id " + id);
-        }
+        // Reuse getUserById to ensure the user exists and throw the
+        // appropriate exception when not found.
+        getUserById(id);
         userRepository.deleteById(id);
     }
 }
