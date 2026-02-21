@@ -46,12 +46,15 @@ make setup
 ```bash
 make observability-up
 make observability-smoke
+make observability-dashboards
 ```
 
 Acesso:
 
 - Grafana: `http://localhost:3000` (`admin` / `admin`)
 - Collector health: `http://localhost:13133`
+- Dashboard compativel RED classic: `http://localhost:3000/d/java-api-red-micrometer-classic`
+- Dashboard compativel RED native: `http://localhost:3000/d/java-api-red-micrometer-native`
 
 ### 2) Subir API
 
@@ -106,6 +109,7 @@ Variaveis publicas suportadas:
 - `OTLP_LOGS_ENDPOINT` (default: `http://localhost:4318/v1/logs`)
 - `APP_ENV` (default: `local`)
 - `APP_VERSION` (default: `0.0.1-SNAPSHOT`)
+- `APP_INSTANCE_ID` (default: `${HOSTNAME}` ou `random UUID`)
 
 A API envia:
 
@@ -128,6 +132,7 @@ Alvos principais:
 - `make observability-down` - derruba stack observability
 - `make observability-logs` - acompanha logs da stack
 - `make observability-smoke` - valida health da stack
+- `make observability-dashboards` - cria/atualiza dashboards de compatibilidade RED para métricas Micrometer OTLP
 - `make integration` - inicia carga continua em background
 - `make integration-stop` - para carga continua
 - `make integration-status` - mostra status e ultimas linhas do log
@@ -154,7 +159,8 @@ java-api-with-otlp-sdk/
 │   ├── compose.observability.yml
 │   └── otel-collector-config.yaml
 ├── scripts/
-│   └── integration-loop.sh
+│   ├── integration-loop.sh
+│   └── grafana-dashboard-compat.sh
 ├── src/
 │   ├── main/
 │   │   ├── java/
@@ -199,6 +205,9 @@ java-api-with-otlp-sdk/
 - Confirme Collector em `http://localhost:13133`
 - Confira `make observability-logs`
 - Confirme endpoints OTLP da API apontando para `http://localhost:4318`
+- Reaplique compatibilidade de dashboards: `make observability-dashboards`
+- Aguarde ao menos 1 ciclo de export de métricas (Micrometer OTLP exporta periodicamente)
+- Se dashboards built-in do LGTM continuarem vazios, use os dashboards `Micrometer OTLP` (eles tratam nomes/labels do Spring Boot + Micrometer)
 
 ## Licenca
 

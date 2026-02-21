@@ -11,7 +11,7 @@ INTEGRATION_LOG_FILE ?= $(RUNTIME_DIR)/integration.log
 INTEGRATION_API_BASE_URL ?= http://localhost:$(APP_PORT)/api/v1
 INTEGRATION_INTERVAL_SECONDS ?= 1
 
-.PHONY: help setup install-deps check-deps check-docker build run down observability-up observability-down observability-logs observability-smoke integration integration-stop integration-status test clean package jar doctor
+.PHONY: help setup install-deps check-deps check-docker build run down observability-up observability-down observability-logs observability-smoke observability-dashboards integration integration-stop integration-status test clean package jar doctor
 
 help:
 	@echo "Available targets:"
@@ -26,6 +26,7 @@ help:
 	@echo "  make observability-down  Stop observability stack"
 	@echo "  make observability-logs  Tail observability stack logs"
 	@echo "  make observability-smoke Verify collector and Grafana endpoints"
+	@echo "  make observability-dashboards Apply Grafana dashboard compatibility patch"
 	@echo "  make integration         Start continuous API traffic generator in background"
 	@echo "  make integration-stop    Stop continuous API traffic generator"
 	@echo "  make integration-status  Show integration process and recent logs"
@@ -209,6 +210,7 @@ observability-up: check-docker
 	echo "Observability stack started."; \
 	echo "Grafana: http://localhost:3000 (admin/admin)"; \
 	echo "Collector health: http://localhost:13133"
+	@$(MAKE) --no-print-directory observability-dashboards
 
 observability-down:
 	@set -euo pipefail; \
@@ -255,6 +257,14 @@ observability-smoke:
 	done; \
 	echo "Observability smoke check failed: collector_ok=$$collector_ok grafana_ok=$$grafana_ok"; \
 	exit 1
+
+observability-dashboards:
+	@set -euo pipefail; \
+	if ! command -v jq >/dev/null 2>&1; then \
+		echo "jq not found. Install jq to apply Grafana dashboard patch."; \
+		exit 1; \
+	fi; \
+	bash scripts/grafana-dashboard-compat.sh
 
 integration:
 	@mkdir -p "$(RUNTIME_DIR)"
