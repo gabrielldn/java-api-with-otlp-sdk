@@ -1,0 +1,27 @@
+services:
+  lgtm:
+    image: grafana/otel-lgtm:0.19.0
+    container_name: java-api-lgtm
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - lgtm-data:/data
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.146.1
+    container_name: java-api-otel-collector
+    restart: unless-stopped
+    depends_on:
+      - lgtm
+    command:
+      - "--config=/etc/otelcol-contrib/config.yaml"
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml:ro
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+      - "13133:13133"
+
+volumes:
+  lgtm-data:
