@@ -88,14 +88,18 @@ class UserServiceTest {
 
     @Test
     void deleteUserExisting() {
-        when(userRepository.existsById(1L)).thenReturn(true);
+        User existing = new User();
+        existing.setId(1L);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(existing));
+
         userService.deleteUser(1L);
+        verify(userRepository).findById(1L);
         verify(userRepository).deleteById(1L);
     }
 
     @Test
     void deleteUserNotFound() {
-        when(userRepository.existsById(1L)).thenReturn(false);
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
         assertThrows(UserNotFoundException.class, () -> userService.deleteUser(1L));
     }
 }

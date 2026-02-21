@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import com.example.config.ApiRoutes;
 import com.example.model.User;
 import com.example.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,6 +22,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(UserController.class)
 class UserControllerIntegrationTest {
+
+    private static final String USERS_BASE = ApiRoutes.BASE_V1 + "/users";
 
     @Autowired
     private MockMvc mockMvc;
@@ -45,7 +48,7 @@ class UserControllerIntegrationTest {
     void getAllUsers() throws Exception {
         given(userService.getAllUsers()).willReturn(Arrays.asList(user));
 
-        mockMvc.perform(get("/users"))
+        mockMvc.perform(get(USERS_BASE))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(1L));
     }
@@ -54,7 +57,7 @@ class UserControllerIntegrationTest {
     void getUserById() throws Exception {
         given(userService.getUserById(1L)).willReturn(user);
 
-        mockMvc.perform(get("/users/1"))
+        mockMvc.perform(get(USERS_BASE + "/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1L));
     }
@@ -63,7 +66,7 @@ class UserControllerIntegrationTest {
     void createUser() throws Exception {
         given(userService.createUser(any(User.class))).willReturn(user);
 
-        mockMvc.perform(post("/users")
+        mockMvc.perform(post(USERS_BASE)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(user)))
                 .andExpect(status().isOk())
@@ -74,7 +77,7 @@ class UserControllerIntegrationTest {
     void updateUser() throws Exception {
         given(userService.updateUser(eq(1L), any(User.class))).willReturn(user);
 
-        mockMvc.perform(put("/users/1")
+        mockMvc.perform(put(USERS_BASE + "/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(user)))
                 .andExpect(status().isOk())
@@ -83,7 +86,7 @@ class UserControllerIntegrationTest {
 
     @Test
     void deleteUser() throws Exception {
-        mockMvc.perform(delete("/users/1"))
+        mockMvc.perform(delete(USERS_BASE + "/1"))
                 .andExpect(status().isOk());
     }
 }

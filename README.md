@@ -1,7 +1,7 @@
 # Java API with OpenTelemetry SDK
 
-![Java](https://img.shields.io/badge/Java-17-orange)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.1.0-brightgreen)
+![Java](https://img.shields.io/badge/Java-25-orange)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.11-brightgreen)
 ![OpenTelemetry](https://img.shields.io/badge/OpenTelemetry-SDK-blue)
 ![License](https://img.shields.io/badge/License-MIT-lightgrey)
 
@@ -75,6 +75,7 @@ The application consists of the following main components:
 
 ```
 java-api-with-otlp-sdk/
+├── Makefile                               # Setup/run commands with GNU Make
 ├── src/
 │   ├── main/
 │   │   ├── java/
@@ -85,41 +86,54 @@ java-api-with-otlp-sdk/
 │   │   │           ├── service/           # Business logic services
 │   │   │           ├── repository/        # Data access layer
 │   │   │           ├── model/             # Domain entities
-│   │   │           ├── config/            # Application configs
-│   │   │           └── Application.java   # Main application class
+│   │   │           └── RestApiApplication.java  # Main application class
 │   │   └── resources/
 │   │       ├── application.properties     # App configuration
 │   └── test/                              # Unit and integration tests
 ├── pom.xml                                # Maven dependencies
-├── Dockerfile                             # Container definition
 └── README.md                              # Project documentation
 ```
 
 ## Prerequisites
 
-To run this project, you need:
+### Recommended (automatic setup)
 
-- JDK 17 or higher
+If you do not want to configure everything manually, the minimum requirement is:
+
+- GNU Make (`make`)
+
+Se voce nao quiser configurar tudo manualmente, o minimo e ter o `make` instalado.
+
+With that, run:
+
+```bash
+make setup
+```
+
+`make setup` installs missing dependencies (Java 25+ and Maven) using the package manager when supported (`apt`, `dnf`, `yum`, `pacman`, `zypper`, `apk`, `brew`).
+
+### Manual setup (without Make)
+
+- JDK 25 or higher
 - Maven 3.6 or higher
 - OpenTelemetry Collector (optional, for exporting telemetry data)
-- Docker (optional, for containerization)
 
 ## Installation
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/java-api-with-otlp-sdk.git
+    git clone https://github.com/gabrielldn/java-api-with-otlp-sdk.git
     cd java-api-with-otlp-sdk
     ```
 
-2. Build the project with Maven:
+2. Prepare the local environment:
     ```bash
-    mvn clean package
+    make setup
     ```
 
-3. (Optional) Build Docker container:
+3. Build the project:
     ```bash
-    docker build -t java-api-with-otlp:latest .
+    make build
     ```
 
 ## Usage
@@ -129,36 +143,53 @@ To run this project, you need:
 Run the application locally:
 
 ```bash
-mvn spring-boot:run
+make run
+```
+
+`make run` performs a clean start: it stops any process already bound to the configured port and starts the app again with fresh compiled classes.
+
+Stop the application (in another terminal):
+
+```bash
+make down
+```
+
+Run on a custom port:
+
+```bash
+make run APP_PORT=8081
+make down APP_PORT=8081
 ```
 
 Or using the JAR file:
 
 ```bash
-java -jar target/java-api-with-otlp-sdk-1.0.0.jar
+make jar
 ```
 
-With Docker:
+Run tests:
 
 ```bash
-docker run -p 8080:8080 java-api-with-otlp:latest
+make test
 ```
 
 ### API Endpoints
 
 Once the application is running, you can access:
 
-- API Base URL: `http://localhost:8080`
-- Swagger UI: `http://localhost:8080/swagger-ui.html`
-- Health Check: `http://localhost:8080/health`
+- API Base URL: `http://localhost:8080/api/v1`
+- Swagger UI: `http://localhost:8080/api/v1/swagger-ui`
+- ReDoc: `http://localhost:8080/api/v1/redoc`
+- OpenAPI JSON: `http://localhost:8080/api/v1/api-docs`
+- Health Check: `http://localhost:8080/api/v1/health`
 
 Main endpoints include:
 
-- `GET /users` - List all users
-- `GET /users/{id}` - Get user by ID
-- `POST /users` - Create new user
-- `PUT /users/{id}` - Update existing user
-- `DELETE /users/{id}` - Delete user
+- `GET /api/v1/users` - List all users
+- `GET /api/v1/users/{id}` - Get user by ID
+- `POST /api/v1/users` - Create new user
+- `PUT /api/v1/users/{id}` - Update existing user
+- `DELETE /api/v1/users/{id}` - Delete user
 
 
 
@@ -166,7 +197,7 @@ Main endpoints include:
 
 ### Spring Boot API
 
-The API is built using Spring Boot 3.1.0 with the following features:
+The API is built using Spring Boot 3.5.11 with the following features:
 
 - RESTful endpoints with proper HTTP status codes
 - Controller-Service-Repository architecture
@@ -195,7 +226,13 @@ An in-memory H2 database is used for data persistence:
 
 ### Swagger Documentation
 
-The API is documented using SpringDoc OpenAPI:
+The API is documented using SpringDoc OpenAPI and can be explored in:
+
+- Swagger UI: `http://localhost:8080/api/v1/swagger-ui`
+- ReDoc: `http://localhost:8080/api/v1/redoc`
+- OpenAPI JSON: `http://localhost:8080/api/v1/api-docs`
+
+Documentation includes:
 
 - Interactive API documentation
 - Try-out functionality for all endpoints
@@ -209,19 +246,17 @@ The API is documented using SpringDoc OpenAPI:
 Key application properties (`application.properties`):
 
 ```properties
-# Server configuration
-server.port=8080
-
 # H2 Database
 spring.datasource.url=jdbc:h2:mem:testdb
-spring.datasource.driverClassName=org.h2.Driver
-spring.datasource.username=sa
-spring.datasource.password=
+spring.datasource.driver-class-name=org.h2.Driver
 spring.h2.console.enabled=true
 
 # JPA/Hibernate
 spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
+
+# API documentation
+springdoc.api-docs.path=/api/v1/api-docs
+springdoc.swagger-ui.path=/api/v1/swagger-ui
 ```
 
 
@@ -234,6 +269,10 @@ spring.jpa.show-sql=true
    - Check the application logs for specific error messages
    - Ensure required ports are available (8080 for API)
 
+2. **Swagger calling `/api/v1/api/v1/...`**:
+   - Stop the app with `make down`
+   - Start again with `make run` (clean start)
+   - Access docs via `http://localhost:8080/api/v1/swagger-ui`
 
 3. **Database connection issues**:
    - Check H2 console for database state
