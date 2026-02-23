@@ -5,6 +5,8 @@
 A aplicacao roda no host local e exporta telemetria OTLP HTTP para o OpenTelemetry Collector.
 O Collector processa e encaminha para a stack LGTM (Prometheus, Tempo, Loki, Grafana).
 
+Tambem existe modo GitOps/Kubernetes como workload de referencia no repositório `secure-gitops-platform`, com canary analysis via Argo Rollouts e backend PostgreSQL HA vindo de `postgres-ha-chaos-lab`.
+
 Componentes:
 
 - `java-api-with-otlp-sdk` (Spring Boot)

@@ -8,6 +8,17 @@
 
 API REST em Spring Boot com exportacao OTLP de traces, metricas e logs, stack local de observabilidade com OpenTelemetry Collector + Grafana LGTM, e automacao de carga continua para gerar sinais observaveis.
 
+## Conexao com a plataforma
+
+Este repositório é o workload de referência do laboratório de plataforma:
+
+- Deploy GitOps/canary: `secure-gitops-platform`
+  - https://github.com/gabrielldn/secure-gitops-platform
+- Backend PostgreSQL HA/chaos: `postgres-ha-chaos-lab`
+  - https://github.com/gabrielldn/postgres-ha-chaos-lab
+
+Fluxo integrado: app instrumentado -> build/scan/sign/attest -> Argo Rollouts com AnalysisTemplate -> Postgres HA.
+
 ## Objetivo do projeto
 
 Entregar um laboratorio local reproduzivel para:
@@ -20,8 +31,9 @@ Entregar um laboratorio local reproduzivel para:
 ## Stack principal
 
 - Runtime/API: `Java 25`, `Spring Boot 3.5.11`, `Maven`.
-- Persistencia local: `H2` em memoria.
+- Persistencia: `H2` (fallback local) e `PostgreSQL` (ambiente GitOps/Kubernetes).
 - Telemetria: `Micrometer + OpenTelemetry (OTLP)`.
+- Metricas para canary analysis: endpoint `Prometheus` em `/actuator/prometheus`.
 - Logs OTLP: `Logback OpenTelemetry appender`.
 - Observabilidade local: `otel/opentelemetry-collector-contrib:0.146.1` + `grafana/otel-lgtm:0.19.0`.
 - Automacao operacional: `Makefile`.
@@ -54,6 +66,7 @@ Se for seguir setup manual completo, veja `docs/prerequisites.md`.
 ## Contratos do repositorio
 
 - Operacao local: `Makefile`.
+- Build de imagem multi-stage: `Dockerfile`.
 - Stack docker observability: `docker/compose.observability.yml`.
 - Config do collector: `docker/otel-collector-config.yaml`.
 - Carga continua: `scripts/integration-loop.sh`.
@@ -129,6 +142,14 @@ Variaveis uteis:
 - `APP_ENV` (default: `local`)
 - `APP_VERSION` (default: `0.0.1-SNAPSHOT`)
 - `APP_INSTANCE_ID` (default: `${HOSTNAME}` ou `random UUID`)
+- `SPRING_DATASOURCE_URL` (default: `jdbc:h2:mem:testdb`)
+- `SPRING_DATASOURCE_USERNAME` (default: `sa`)
+- `SPRING_DATASOURCE_PASSWORD` (default: vazio)
+- `SPRING_DATASOURCE_DRIVER_CLASS_NAME` (default: `org.h2.Driver`)
+- `SPRING_JPA_HIBERNATE_DDL_AUTO` (default: `update`)
+- `SPRING_H2_CONSOLE_ENABLED` (default: `true`)
+- `SERVER_PORT` (default: `8080`)
+- `MANAGEMENT_SERVER_PORT` (default: mesmo valor de `SERVER_PORT`)
 
 ## Documentacao
 
@@ -161,6 +182,7 @@ java-api-with-otlp-sdk/
 |-- src/
 |   |-- main/
 |   `-- test/
+|-- Dockerfile
 |-- Makefile
 |-- pom.xml
 `-- README.md

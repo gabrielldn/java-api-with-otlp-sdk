@@ -74,3 +74,15 @@ make test
 make run APP_PORT=8081
 make integration INTEGRATION_API_BASE_URL=http://localhost:8081/api/v1
 ```
+
+## Execucao com PostgreSQL externo
+
+Exemplo (compatível com `postgres-ha-chaos-lab`):
+
+```bash
+SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:15432/appdb \
+SPRING_DATASOURCE_USERNAME=appuser \
+SPRING_DATASOURCE_PASSWORD=dummy-apppass-change-me \
+SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver \
+make run
+```

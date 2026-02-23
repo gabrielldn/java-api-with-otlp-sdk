@@ -47,6 +47,19 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- PostgreSQL para execucao em Kubernetes -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- Exposicao de metricas Prometheus para PodMonitor/Argo Analysis -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
+
         <!-- Swagger UI com SpringDoc -->
         <dependency>
             <groupId>org.springdoc</groupId>

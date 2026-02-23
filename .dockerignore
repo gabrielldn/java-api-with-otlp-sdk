@@ -1,0 +1,9 @@
+.git
+.github
+.mvn
+target
+.runtime
+README.md
+docs
+docker
+scripts
